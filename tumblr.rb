@@ -102,15 +102,9 @@ end
 
 def process_posts(posts)
   posts.each do |post|
-    timestamp = post['timestamp']
-    caption = post['caption']
     post_type = post['type']
 
-    @postsHash[post['id']] = {
-      'timestamp': timestamp,
-      'type': post_type,
-      'caption': caption
-    }
+    @postsHash[post['id']] = post
 
     if post_type == 'photo'
       @postsHash[post['id']]['photos'] = process_photos(post['photos'])
@@ -143,7 +137,7 @@ def request_next_page(offset)
 end
 
 def posts_to_json(hash)
-  File.open('data/posts.json', 'w') do |f|
+  File.open(ENV['TUMBLR_URL'] + '.json', 'w') do |f|
     f.write(JSON.pretty_generate(hash))
   end
 end
