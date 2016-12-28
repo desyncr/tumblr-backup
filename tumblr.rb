@@ -16,7 +16,7 @@ Tumblr.configure do |config|
 end
 
 # disable downloads
-@disable_downloads = true
+@enable_downloads = ENV['ENABLE_DOWNLOAD'] || true
 
 # the hash to be saved into JSON file
 @postsHash = {}
@@ -54,18 +54,22 @@ end
 # timeout (in seconds) for photo downloads
 @request_timeout = 60
 
-def download_photo(url)
-  filename = url.split('/')[4]
-  File.open("data/images/#{filename}", 'wb') do |f|
+def download(url, path)
+  return if File.exists? "#{path}"
+
+  File.open(path, 'wb') do |f|
     f.write open(url, :read_timeout => @request_timeout).read
   end
 end
 
+def download_photo(url)
+  filename = url.split('/')[4]
+  download url, "data/images/#{filename}"
+end
+
 def download_video(url)
   filename = url.split('/')[3]
-  File.open("data/videos/#{filename}", 'wb') do |f|
-    f.write open(url, :read_timeout => @request_timeout).read
-  end
+  download url, "data/video/#{filename}"
 end
 
 def extract_filename(photo_url)
@@ -74,16 +78,11 @@ def extract_filename(photo_url)
 end
 
 def process_photos(photos)
-  photos_array = []
   photos.each do |photo, index|
-    if !@disable_downloads
+    if @enable_downloads
       download_photo(photo['original_size']['url'])
     end
-    photo['original_size']['url'] = extract_filename(photo['original_size']['url'])
-    photos_array.push(photo['original_size'])
   end
-
-  photos_array
 end
 
 def process_video(post)
@@ -92,7 +91,7 @@ def process_video(post)
     video_url = post['permalink_url']
   else
     video_url = post['video_url']
-    if !@disable_downloads
+    if @enable_downloads
       download_video(video_url)
     end
   end
@@ -107,12 +106,9 @@ def process_posts(posts)
     @postsHash[post['id']] = post
 
     if post_type == 'photo'
-      @postsHash[post['id']]['photos'] = process_photos(post['photos'])
+      process_photos(post['photos'])
     elsif post_type == 'video'
-      # save video type - 'embed' or 'file'?
-      @postsHash[post['id']]['video'] = process_video(post)
-    elsif post_type == 'chat'
-      @postsHash[post['id']]['dialogue'] = post['dialogue']
+      process_video(post)
     end
 
     @saved_posts_count += 1
