@@ -64,12 +64,12 @@ end
 
 def download_photo(url)
   filename = url.split('/')[4]
-  download url, "data/images/#{filename}"
+  download url, ENV['TUMBLR_URL'] + "/#{filename}"
 end
 
 def download_video(url)
   filename = url.split('/')[3]
-  download url, "data/video/#{filename}"
+  download url, ENV['TUMBLR_URL'] + "/#{filename}"
 end
 
 def extract_filename(photo_url)
@@ -140,5 +140,7 @@ end
 
 # Let's begin!
 Whirly.start(:spinner => 'pencil')
+
+Dir.mkdir ENV['TUMBLR_URL'] if ! File.exists? ENV['TUMBLR_URL']
 process_posts(@posts)
 
