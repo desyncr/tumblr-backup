@@ -4,23 +4,25 @@ As a V1, post data is being written to `${TUMBLR_URL}.json`.
 
 ## Install
 
-1. `bundle install`
+1. Install dependencies
 
-2. populate `.env`: 
+	bundle install
 
-    ```
-    CONSUMER_KEY='{your-consumer-key}'
-    CONSUMER_SECRET='{your-consumer-secret}'
-    ENABLE_DOWNLOAD=true
-    ```
+2. Configure access keys
+
+	CONSUMER_KEY=[your-consumer-key]
+	CONSUMER_SECRET=[your-consumer-secret]
+	ENABLE_DOWNLOAD=true
+
+  * You may copy `.env.example`.
 
 ## Usage
 
-    `TUMBLR_URL=example.tumblr.com ruby ./tumblr.rb`
+    `TUMBLR_URL=example.tumblr.com ./tumblr.rb`
 
 ## Next Steps
 
-- [x] download images locally
-- [x] format posts photo urls to match local photo filenames
-- [ ] prevent posts from being re-read each usage
-- [ ] handle video/non-photo posts
+- [x] Download images locally
+- [x] Format posts photo urls to match local photo filenames
+- [ ] Prevent posts from being re-read each usage
+- [ ] Handle video/non-photo posts

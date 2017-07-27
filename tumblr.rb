@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require 'dotenv'
 require 'tumblr_client'
 require 'json'
