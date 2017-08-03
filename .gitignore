@@ -2,3 +2,5 @@
 *.json
 data/*
 *.tumblr.com
+*.tar.gz
+dumps/*

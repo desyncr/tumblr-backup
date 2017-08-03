@@ -6,6 +6,7 @@ require 'pry'
 require 'open-uri'
 require 'ruby-progressbar'
 require 'whirly'
+require 'fileutils'
 
 Dotenv.load
 
@@ -18,6 +19,8 @@ end
 
 # disable downloads
 @enable_downloads = ENV['ENABLE_DOWNLOAD'] || true
+
+@download_path = "./dumps/#{ENV['TUMBLR_URL']}"
 
 # the hash to be saved into JSON file
 @postsHash = {}
@@ -65,12 +68,12 @@ end
 
 def download_photo(url)
   filename = url.split('/')[4]
-  download url, ENV['TUMBLR_URL'] + "/#{filename}"
+  download url, "#{@download_path}/#{filename}"
 end
 
 def download_video(url)
   filename = url.split('/')[3]
-  download url, ENV['TUMBLR_URL'] + "/#{filename}"
+  download url, "#{@download_path}/#{filename}"
 end
 
 def extract_filename(photo_url)
@@ -134,7 +137,7 @@ def request_next_page(offset)
 end
 
 def posts_to_json(hash)
-  File.open(ENV['TUMBLR_URL'] + '.json', 'w') do |f|
+  File.open("#{@download_path}/#{ENV['TUMBLR_URL']}.json", 'w') do |f|
     f.write(JSON.pretty_generate(hash))
   end
 end
@@ -142,6 +145,6 @@ end
 # Let's begin!
 Whirly.start(:spinner => 'pencil')
 
-Dir.mkdir ENV['TUMBLR_URL'] if ! File.exists? ENV['TUMBLR_URL']
+FileUtils.mkdir_p @download_path if File.exists? @download_path
 process_posts(@posts)
 
